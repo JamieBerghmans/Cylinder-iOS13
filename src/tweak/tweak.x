@@ -324,8 +324,8 @@ static inline void setSettingsNotification(CFNotificationCenterRef center, void 
     IOS_VERSION = UIDevice.currentDevice.systemVersion.intValue;
     load_that_shit();
 
-    Class iconClass = %c(SBIconView) ?: %c(SBIcon);
-    _listClass = %c(SBIconListView) ?: %c(SBIconList);
+    Class iconClass = %c(SBIcon);
+    _listClass = %c(SBIconListView);
     Class folderClass = IOS_VERSION >= 7 ? %c(SBFolderView) : %c(SBIconController);
 
     %init(SBIcon=iconClass, SBIconList=_listClass, SBFolderView=folderClass);

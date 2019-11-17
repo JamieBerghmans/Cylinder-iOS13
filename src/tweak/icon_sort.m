@@ -37,7 +37,9 @@ static void insertion_sort(NSArray *subviews, UIView **arr, int max)
 
 int get_max_icons_for_list(UIView *self)
 {
-    SEL sel = @selector(maxIcons);
+    //return 24; //STATIC FOR TESTING
+    //SEL sel = @selector(maxIcons); //OLD IMPLEMENTATION
+    SEL sel = @selector(maximumIconCount) //NEW BUT GIVES UNRECOGNIZED SELECTOR -> http://developer.limneos.net/index.php?ios=13.1.3&framework=SpringBoardHome.framework&header=SBIconListView.h
     typedef int (*func_t)(id, SEL);
     return ((func_t)[self.class methodForSelector:sel])(self.class, sel);
 }

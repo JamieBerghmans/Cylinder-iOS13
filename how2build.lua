@@ -22,9 +22,8 @@ local function builder()
     local b = _G.builder('apple')
     b.compiler = 'clang'
     b.build_dir = '.aite_build'
-    b.sdk_path = 'deps/iPhoneOS9.3.sdk'
+    b.sdk_path = 'deps/iPhoneOS13.2.sdk'
     b.archs = {
-        'armv7',
         'arm64',
     }
     b.include_dirs = {
@@ -38,7 +37,7 @@ local function builder()
     b.library_dirs = {
         'deps/lib',
     }
-    b.sflags = '-mios-version-min=4.0'
+    b.sflags = '-mios-version-min=13.0'
     return b
 end
 
@@ -46,7 +45,7 @@ local deb = debber()
 deb.packageinfo = {
     Package = 'com.r333d.cylinder',
     Name = 'Cylinder',
-    Version = '1.0.7~beta1',
+    Version = '1.0.8~beta1',
     Architecture = 'iphoneos-arm',
     Depends = 'firmware (>= 3.0), mobilesubstrate (>= 0.9.6011), preferenceloader',
     Icon = 'file:///Library/PreferenceBundles/CylinderSettings.bundle/Icon@2x.png',
@@ -141,7 +140,12 @@ function tweak()
         use_luajit and 'luajit' or nil,
     }
     b.bin = 'Cylinder.dylib'
-    b:link(table.merge(b:compile(), not use_luajit and lua() or nil))
+    print("DEBUG -> BEFORE tweak link")
+    print("DEBUG -> merging table")
+    local testing = table.merge(b:compile(), not use_luajit and lua() or nil)
+    print("DEBUG -> linking")
+    b:link(testing)
+    print("DEBUG -> AFTER tweak link")
 end
 
 function settings()
