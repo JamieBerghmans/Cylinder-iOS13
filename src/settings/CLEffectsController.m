@@ -27,14 +27,6 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 static CLEffectsController *sharedController = nil;
 
-@implementation UIDevice (OSVersion)
-- (BOOL)iOSVersionIsAtLeast:(NSString*)version
-{
-    NSComparisonResult result = [[self systemVersion] compare:version options:NSNumericSearch];
-    return (result == NSOrderedDescending || result == NSOrderedSame);
-}
-@end
-
 @interface UITableView (Private)
 - (NSArray *) indexPathsForSelectedRows;
 @property(nonatomic) BOOL allowsMultipleSelectionDuringEditing;
@@ -58,13 +50,10 @@ static CLEffectsController *sharedController = nil;
         _tableView.delegate = self;
         _tableView.editing = false;
         _tableView.allowsSelection = true;
-
-        if(UIDevice.currentDevice.systemVersion.intValue >= 5)
-        {
-            _tableView.allowsMultipleSelection = false;
-            _tableView.allowsSelectionDuringEditing = true;
-            _tableView.allowsMultipleSelectionDuringEditing = true;
-        }
+        _tableView.allowsMultipleSelection = false;
+        _tableView.allowsSelectionDuringEditing = true;
+        _tableView.allowsMultipleSelectionDuringEditing = true;
+        
 		
 		if ([self respondsToSelector:@selector(setView:)])
 			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];
