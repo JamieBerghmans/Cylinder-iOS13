@@ -28,14 +28,6 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #define ADD_SECTION 0
 #define FORMULA_SECTION 1
 
-@implementation UIDevice (OSVersion)
-- (BOOL)iOSVersionIsAtLeast:(NSString*)version
-{
-    NSComparisonResult result = [[self systemVersion] compare:version options:NSNumericSearch];
-    return (result == NSOrderedDescending || result == NSOrderedSame);
-}
-@end
-
 @interface UITableView (Private)
 - (NSArray *) indexPathsForSelectedRows;
 @property(nonatomic) BOOL allowsMultipleSelectionDuringEditing;
@@ -57,16 +49,6 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 		_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) style:UITableViewStyleGrouped];
         _tableView.dataSource = self;
         _tableView.delegate = self;
-        //_tableView.allowsSelection = true;
-        //_tableView.allowsSelectionDuringEditing = true;
-
-        /*
-		if ([[UIDevice currentDevice] iOSVersionIsAtLeast: @"5.0"]) {
-			[_tableView setAllowsMultipleSelection:NO];
-			[_tableView setAllowsSelectionDuringEditing:YES];
-			[_tableView setAllowsMultipleSelectionDuringEditing:YES];
-		}
-        */
 
 		if ([self respondsToSelector:@selector(setView:)])
 			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];	
