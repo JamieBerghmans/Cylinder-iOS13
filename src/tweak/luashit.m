@@ -81,7 +81,7 @@ static NSDictionary *gen_error_dict(NSString *script, BOOL broken)
 
 static void error_notification(NSArray *errors)
 {
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:errors format:NSPropertyListBinaryFormat_v1_0 errorDescription:NULL];
+     NSData *data = [NSPropertyListSerialization dataWithPropertyList:errors format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
     if(data)
     {
         [data writeToFile:LOG_DIR".errornotify" atomically:true];
@@ -308,7 +308,7 @@ static int l_popup(lua_State *L)
 {
     l_concat_args(L, "popup", "\n");
 
-    [[[UIAlertView.alloc initWithTitle:@"Cylinder" message:[NSString stringWithUTF8String:lua_tostring(L, -1)] delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] autorelease] show];
+    [UIAlertController alertControllerWithTitle:@"Cylinder"message:[NSString stringWithUTF8String:lua_tostring(L, -1)] preferredStyle:UIAlertControllerStyleAlert];
 
     return 0;
 }

@@ -22,7 +22,6 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "UIView+Cylinder.h"
 #import "icon_sort.h"
 
-int IOS_VERSION;
 
 static BOOL _enabled;
 static u_int32_t _randSeedForCurrentPage;
@@ -173,23 +172,6 @@ static CGRect get_untransformed_frame(UIView *self)
     objc_setAssociatedObject(self, @selector(hasDifferentSubviews), [NSNumber numberWithBool:true], OBJC_ASSOCIATION_RETAIN);
     %orig;
 }
-
-//in iOS 6- only 5 columns are shown at a time (for performance, probably)
-//since the animations are unpredictable we want to show all icons in a page
-//if it is visible on the screen. performance loss is pretty negligible
-static int biggestTo = 0;
--(void)showIconImagesFromColumn:(int)from toColumn:(int)to totalColumns:(int)total visibleIconsJitter:(BOOL)jittering
-{
-    if(to > biggestTo) biggestTo = to;
-    if([self wasModifiedByCylinder])
-    {
-        from = 0;
-        to = biggestTo;
-        total = biggestTo + 1;
-    }
-    %orig(from, to, total, jittering);
-}
-
 -(void)dealloc
 {
     dealloc_sorted_icon_array_for_list(self);
@@ -273,28 +255,6 @@ static BOOL _justSetScrollViewSize;
     %orig;
     end_scroll(scrollView);
 }
-
-//in iOS 6-, the dock is actually *BEHIND* the icon scroll view, so this fixes that
--(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-{
-    %orig;
-    if(IOS_VERSION < 7)
-        [scrollView.superview sendSubviewToBack:scrollView];
-    page_swipe(scrollView);
-}
-%end
-
-//iOS 7 folder blur glitch hotfix for 3D effects.
-%hook SBFolderIconBackgroundView
--(CGRect)wallpaperRelativeBounds
-{
-    CGRect frame = %orig;
-    if(frame.origin.x < 0) frame.origin.x = 0;
-    if(frame.origin.x > SCREEN_SIZE.width - frame.size.width) frame.origin.x = SCREEN_SIZE.width - frame.size.width;
-    if(frame.origin.y > SCREEN_SIZE.height - frame.size.height) frame.origin.y = SCREEN_SIZE.height - frame.size.height;
-    if(frame.origin.y < 0) frame.origin.y = 0;
-    return frame;
-}
 %end
 
 static void load_that_shit()
@@ -310,7 +270,6 @@ static void load_that_shit()
     {
         BOOL random = [[settings valueForKey:PrefsRandomizedKey] boolValue];
         NSArray *effects = [settings valueForKey:PrefsEffectKey];
-        if(![effects isKindOfClass:NSArray.class]) effects = nil; //this is for backwards compatibility
         _enabled = init_lua(effects, random);
     }
 }
@@ -321,12 +280,11 @@ static inline void setSettingsNotification(CFNotificationCenterRef center, void 
 }
 
 %ctor{
-    IOS_VERSION = UIDevice.currentDevice.systemVersion.intValue;
     load_that_shit();
 
-    Class iconClass = %c(SBIcon);
-    _listClass = %c(SBIconListView);
-    Class folderClass = IOS_VERSION >= 7 ? %c(SBFolderView) : %c(SBIconController);
+    Class iconClass = %c(SBIconView) ?: %c(SBIcon);
+    _listClass = %c(SBIconListView) ?: %c(SBIconList);
+    Class folderClass = %c(SBFolderView);
 
     %init(SBIcon=iconClass, SBIconList=_listClass, SBFolderView=folderClass);
 
