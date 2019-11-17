@@ -29,14 +29,6 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #define BITCOIN_ADDRESS @"177JwbKv8msAQPVk8azEKMCuNBWHJbs1XT"
 #define PAYPAL_URL @"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=rweichler%40gmail%2ecom&lc=US&item_name=Reed%20Weichler&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"
 
-@implementation UIDevice (OSVersion)
-- (BOOL)iOSVersionIsAtLeast:(NSString*)version
-{
-    NSComparisonResult result = [[self systemVersion] compare:version options:NSNumericSearch];
-    return (result == NSOrderedDescending || result == NSOrderedSame);
-}
-@end
-
 @interface UITableView (Private)
 - (NSArray *) indexPathsForSelectedRows;
 @property(nonatomic) BOOL allowsMultipleSelectionDuringEditing;
@@ -59,12 +51,10 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 		[_tableView setDelegate:self];
 		[_tableView setEditing:NO];
 		[_tableView setAllowsSelection:YES];
-
-		if ([[UIDevice currentDevice] iOSVersionIsAtLeast: @"5.0"]) {
-			[_tableView setAllowsMultipleSelection:NO];
-			[_tableView setAllowsSelectionDuringEditing:YES];
-			[_tableView setAllowsMultipleSelectionDuringEditing:YES];
-		}
+      		[_tableView setAllowsMultipleSelection:NO];
+       		[_tableView setAllowsSelectionDuringEditing:YES];
+      		[_tableView setAllowsMultipleSelectionDuringEditing:YES];
+		
 		
 		if ([self respondsToSelector:@selector(setView:)])
 			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];
