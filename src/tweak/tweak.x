@@ -255,6 +255,24 @@ static BOOL _justSetScrollViewSize;
     %orig;
     end_scroll(scrollView);
 }
+
+//in iOS 6- (and iOS 13, perhaps lower versions as well), the dock is actually *BEHIND* the icon scroll view, so this fixes that
+-(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    %orig;
+    if([self isKindOfClass:%c(SBRootFolderView)])
+        [scrollView.superview sendSubviewToBack:scrollView];
+    page_swipe(scrollView);
+}
+
+// For iOS 13. SpringBoard "optimizes" the icon visibility by only showing the bare
+// minimum. I have no idea why this works, but it does. An interesting stack trace can
+// be found by forcing a crash in -[SBRecycledViewsContainer addSubview:]. Probably best to decompile this function in IDA or something.
+-(void)updateVisibleColumnRangeWithTotalLists:(unsigned long long)arg1 columnsPerList:(unsigned long long)arg2 iconVisibilityHandling:(long long)arg3
+{
+    return %orig(arg1, arg2, 0);
+}
+
 %end
 
 static void load_that_shit()

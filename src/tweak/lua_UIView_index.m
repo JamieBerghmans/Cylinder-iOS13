@@ -46,10 +46,9 @@ int l_uiview_index(lua_State *L)
 
 //screw good practice, i dont have time for casting and
 //private header files
-static int invoke_int(id self, SEL selector, BOOL use_orientation, BOOL classMethod)
+static int invoke_int(id self, SEL selector, BOOL use_orientation)
 {
-    IMP imp = classMethod ? [self methodForSelector:selector] : [self instanceMethodForSelector:selector];
-
+    IMP imp = [self methodForSelector:selector];
     if(use_orientation)
     {
         typedef int (*functype)(id, SEL, UIDeviceOrientation);
@@ -147,10 +146,11 @@ static int l_uiview_index_height(lua_State *L)
 static int l_uiview_index_max_icons(lua_State *L)
 {
     UIView *self = (UIView *)lua_touserdata(L, 1);
+    id obj = self;
     SEL selector = @selector(maximumIconCount);
-    if([self.class instancesRespondToSelector:selector])
+    if([obj respondsToSelector:selector])
     {
-        lua_pushnumber(L, invoke_int(self.class, selector, false, false));
+        lua_pushnumber(L, invoke_int(obj, selector, false));
         return 1;
     }
 
@@ -160,10 +160,10 @@ static int l_uiview_index_max_icons(lua_State *L)
 static int l_uiview_index_max_columns(lua_State *L)
 {
     UIView *self = (UIView *)lua_touserdata(L, 1);
-    SEL selector = @selector(iconColumnsForInterfaceOrientation:);
-    if([self.class respondsToSelector:selector])
+    SEL selector = @selector(iconColumnsForCurrentOrientation);
+    if([self respondsToSelector:selector])
     {
-        lua_pushnumber(L, invoke_int(self.class, selector, true, true));
+        lua_pushnumber(L, invoke_int(self, selector, false));
         return 1;
     }
 
@@ -173,10 +173,10 @@ static int l_uiview_index_max_columns(lua_State *L)
 static int l_uiview_index_max_rows(lua_State *L)
 {
     UIView *self = (UIView *)lua_touserdata(L, 1);
-    SEL selector = @selector(iconRowsForInterfaceOrientation:);
-    if([self.class respondsToSelector:selector])
+    SEL selector = @selector(iconRowsForCurrentOrientation);
+    if([self respondsToSelector:selector])
     {
-        lua_pushnumber(L, invoke_int(self.class, selector, true, true));
+        lua_pushnumber(L, invoke_int(self, selector, false));
         return 1;
     }
 

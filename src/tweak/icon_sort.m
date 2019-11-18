@@ -1,5 +1,6 @@
 #import "icon_sort.h"
 #import <objc/runtime.h>
+#import <macros.h>
 
 //this could have been a single statement,
 //but id rather have it be readable
@@ -35,12 +36,13 @@ static void insertion_sort(NSArray *subviews, UIView **arr, int max)
     memset(&arr[count], (int)NULL, (max - count)*sizeof(UIView *));
 }
 
-int get_max_icons_for_list(UIView *view)
+int get_max_icons_for_list(UIView *self)
 {
-    SEL sel = @selector(maximumIconCount);
-    IMP imp = [view.class instanceMethodForSelector:sel];
-    int temp = ((int (*)(id, SEL)) imp)(view, sel);
-    return temp;
+    id obj = self;
+    SEL sel= @selector(maximumIconCount);
+  
+    typedef int (*func_t)(id, SEL);
+    return ((func_t)[obj methodForSelector:sel])(obj, sel);
 }
 
 UIView ** get_sorted_icons_from_list(id self)
